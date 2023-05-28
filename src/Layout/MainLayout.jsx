@@ -5,7 +5,7 @@ import Footer from "../Pages/Shared/Footer/Footer";
 const MainLayout = () => {
     const location = useLocation();
     console.log(location);
-    const isLoginPage = location.pathname.includes('login');
+    const isLoginPage = location.pathname.includes('login') || location.pathname.includes('signup');
     return (
         <div>
             {isLoginPage || <Navbar></Navbar>}

@@ -1,15 +1,24 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   loadCaptchaEnginge,
   LoadCanvasTemplate,
   validateCaptcha,
 } from "react-simple-captcha";
-import logImg from "../assets/others/authentication2.png"
-
+import logImg from "../assets/others/authentication2.png";
+import { AuthContext } from "../providers/AuthProvider";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { AiFillGoogleCircle } from "react-icons/ai";
+import { FaFacebook, FaGithub } from "react-icons/fa";
+import bgImg from "../assets/others/authentication.png";
+import { Helmet } from "react-helmet-async";
+import Swal from "sweetalert2";
 
 const Login = () => {
-  const captchaRef = useRef(null);
   const [disabled, setDisabled] = useState(true);
+  const { signIn } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
   useEffect(() => {
     loadCaptchaEnginge(6);
@@ -21,80 +30,123 @@ const Login = () => {
     const email = form.email.value;
     const password = form.password.value;
     console.log("Login form: ", email, password);
+
+    signIn(email, password)
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+        Swal.fire({
+          icon: 'success',
+          title: 'Loged in Successfully',
+          text: 'Enjoy your full access!!',
+          footer: '<a href="/">Back to Home</a>'
+        })
+        navigate(from, { replace: true });
+      })
+      .catch((error) => console.log(error));
   };
 
-  const handlevalidateCaptcha = () => {
-    const user_captcha_value = captchaRef.current.value;
+  const handlevalidateCaptcha = (event) => {
+    const user_captcha_value = event.target.value;
     if (validateCaptcha(user_captcha_value) == true) {
       setDisabled(false);
-      alert("Captcha Matched, you can login now.");
     } else {
-      setDisabled(true)
-      alert("Captcha Does Not Match, please try again");
+      setDisabled(true);
     }
   };
 
   return (
-    <div className="hero min-h-screen bg-base-200">
-      <div className="hero-content flex-col lg:flex-row">
-        <div className="text-center w-1/2">
-          <h1 className="text-5xl font-bold mb-6">Login now!</h1>
-          <img src={logImg} alt="" />
-        </div>
-        <div className="card w-1/2  max-w-sm shadow-2xl bg-base-100">
-          <form onSubmit={handleLogin} className="card-body">
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Email</span>
-              </label>
-              <input
-                type="email"
-                name="email"
-                placeholder="email"
-                className="input input-bordered"
-              />
-            </div>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Password</span>
-              </label>
-              <input
-                type="password"
-                name="password"
-                placeholder="password"
-                className="input input-bordered"
-              />
-              <label className="label">
-                <a href="#" className="label-text-alt link link-hover">
-                  Forgot password?
-                </a>
-              </label>
-            </div>
-            <div className="form-control">
-              <label className="label">
-                <LoadCanvasTemplate />
-              </label>
-              <input
-                type="text"
-                ref={captchaRef}
-                name="captcha"
-                placeholder="Type the captcha above"
-                className="input input-bordered"
-              />
-              <button
-                onClick={handlevalidateCaptcha}
-                className="btn btn-outline btn-primary btn-xs mt-4"
-              >
-                Validate Captcha
-              </button>
-            </div>
-            <div className="form-control mt-6">
-              <input disabled={disabled} className="btn btn-primary" type="submit" value="Login" />
-            </div>
-          </form>
+    <>
+      <Helmet>
+        <title>Bistro Boss | Login</title>
+      </Helmet>
+      <div
+        className="hero min-h-screen"
+        style={{ backgroundImage: `url(${bgImg})` }}
+      >
+        <div className="hero-content flex-col lg:flex-row">
+          <div className="text-center w-1/2">
+            <h1 className="text-5xl font-bold mb-6">Login now!</h1>
+            <img src={logImg} alt="" />
+          </div>
+          <div className="card w-1/2  max-w-lg shadow-2xl bg-base-100">
+            <form onSubmit={handleLogin} className="card-body">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Email</span>
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="email"
+                  className="input input-bordered"
+                />
+              </div>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Password</span>
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="password"
+                  className="input input-bordered"
+                />
+                <label className="label">
+                  <a href="#" className="label-text-alt link link-hover">
+                    Forgot password?
+                  </a>
+                </label>
+              </div>
+              <div className="form-control">
+                <label className="label">
+                  <LoadCanvasTemplate />
+                </label>
+                <input
+                  type="text"
+                  onBlur={handlevalidateCaptcha}
+                  name="captcha"
+                  placeholder="Type the captcha above"
+                  className="input input-bordered"
+                />
+              </div>
+              <div className="form-control mt-6">
+                <input
+                  disabled={disabled}
+                  className="btn bg-[#D1A054] border-0"
+                  type="submit"
+                  value="Login"
+                />
+              </div>
+              <div className="form-control mt-3">
+                <Link to="/signup">
+                  <p className="text-[#D1A054] text-center hover:underline">
+                    New here?{" "}
+                    <span className="font-semibold">Create a new account</span>
+                  </p>
+                </Link>
+              </div>
+              <div className="form-control">
+                <p className="text-center font-semibold mb-4">
+                  or sign in with
+                </p>
+                <div className="flex mx-auto space-x-6">
+                  <div>
+                    <FaFacebook className="text-3xl hover:text-[#D1A054] cursor-pointer"></FaFacebook>
+                  </div>
+                  <div>
+                    <AiFillGoogleCircle className="text-[32px] hover:text-[#D1A054] cursor-pointer"></AiFillGoogleCircle>
+                  </div>
+                  <div>
+                    <FaGithub className="text-3xl hover:text-[#D1A054] cursor-pointer"></FaGithub>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
