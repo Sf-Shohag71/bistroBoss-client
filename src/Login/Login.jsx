@@ -112,7 +112,7 @@ const Login = () => {
               </div>
               <div className="form-control mt-6">
                 <input
-                  disabled={disabled}
+                  disabled={false}
                   className="btn bg-[#D1A054] border-0"
                   type="submit"
                   value="Login"
