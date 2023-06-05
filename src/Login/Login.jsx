@@ -7,11 +7,10 @@ import {
 import logImg from "../assets/others/authentication2.png";
 import { AuthContext } from "../providers/AuthProvider";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { AiFillGoogleCircle } from "react-icons/ai";
-import { FaFacebook, FaGithub } from "react-icons/fa";
 import bgImg from "../assets/others/authentication.png";
 import { Helmet } from "react-helmet-async";
 import Swal from "sweetalert2";
+import SocialLogin from "../Components/SocialLogin/SocialLogin";
 
 const Login = () => {
   const [disabled, setDisabled] = useState(true);
@@ -36,11 +35,11 @@ const Login = () => {
         const user = result.user;
         console.log(user);
         Swal.fire({
-          icon: 'success',
-          title: 'Loged in Successfully',
-          text: 'Enjoy your full access!!',
-          footer: '<a href="/">Back to Home</a>'
-        })
+          icon: "success",
+          title: "Loged in Successfully",
+          text: "Enjoy your full access!!",
+          footer: '<a href="/">Back to Home</a>',
+        });
         navigate(from, { replace: true });
       })
       .catch((error) => console.log(error));
@@ -130,17 +129,7 @@ const Login = () => {
                 <p className="text-center font-semibold mb-4">
                   or sign in with
                 </p>
-                <div className="flex mx-auto space-x-6">
-                  <div>
-                    <FaFacebook className="text-3xl hover:text-[#D1A054] cursor-pointer"></FaFacebook>
-                  </div>
-                  <div>
-                    <AiFillGoogleCircle className="text-[32px] hover:text-[#D1A054] cursor-pointer"></AiFillGoogleCircle>
-                  </div>
-                  <div>
-                    <FaGithub className="text-3xl hover:text-[#D1A054] cursor-pointer"></FaGithub>
-                  </div>
-                </div>
+                <SocialLogin></SocialLogin>
               </div>
             </form>
           </div>

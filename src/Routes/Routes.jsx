@@ -7,8 +7,9 @@ import Login from "../Login/Login";
 import SignUp from "../SignUp/SignUp";
 import Secret from "../Pages/Shared/Secret/Secret";
 import PrivateRoute from "./PrivateRoute";
-import Deshboard from "../Layout/Deshboard.jsx/Deshboard";
+import Deshboard from "../Layout/Deshboard/Deshboard";
 import MyCart from "../Pages/Deshboard/MyCart/MyCart";
+import AllUsers from "../Pages/Deshboard/AllUsers";
 
 export const router = createBrowserRouter([
   {
@@ -43,11 +44,15 @@ export const router = createBrowserRouter([
   },
   {
     path: "/deshboard",
-    element: <Deshboard></Deshboard>,
+    element: <PrivateRoute><Deshboard></Deshboard></PrivateRoute>,
     children: [
       {
         path: "mycart",
         element: <MyCart></MyCart>
+      },
+      {
+        path: "allusers",
+        element: <AllUsers></AllUsers>
       },
     ]
   },

@@ -4,37 +4,33 @@ import { AiFillDelete } from "react-icons/ai";
 import Swal from "sweetalert2";
 
 const MyCart = () => {
-  const [cart,refetch] = useCart();
+  const [cart, refetch] = useCart();
   const totalPrice = cart.reduce((sum, item) => item.price + sum, 0);
 
-  const handleDelete = (item) =>{
+  const handleDelete = (item) => {
     Swal.fire({
-      title: 'Are you sure?',
+      title: "Are you sure?",
       text: "You won't be able to revert this!",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`http://localhost:5000/carts/${item._id}`,{
-          method: 'DELETE'
+        fetch(`http://localhost:5000/carts/${item._id}`, {
+          method: "DELETE",
         })
-        .then(res=>res.json())
-        .then(data=>{
-          if (data.deletedCount > 0) {
-            refetch();
-            Swal.fire(
-              'Deleted!',
-              'Your file has been deleted.',
-              'success'
-            )
-          }
-        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.deletedCount > 0) {
+              refetch();
+              Swal.fire("Deleted!", "Your file has been deleted.", "success");
+            }
+          });
       }
-    })
-  }
+    });
+  };
 
   return (
     <div className="w-full px-10">
@@ -51,8 +47,7 @@ const MyCart = () => {
           {/* head */}
           <thead className="bg-[#D1A054]">
             <tr>
-              <th>
-              </th>
+              <th></th>
               <th>Foods</th>
               <th>Name</th>
               <th>Price</th>
@@ -60,37 +55,32 @@ const MyCart = () => {
             </tr>
           </thead>
           <tbody>
-            {
-                cart.map((item, index)=> <tr
-                key={item._id}
-                >
-                    <td>
-                      <label>
-                        {index+1}
-                      </label>
-                    </td>
-                    <td>
-                      <div className="flex items-center space-x-3">
-                        <div className="avatar">
-                          <div className="w-12 h-12">
-                            <img
-                              src={item.image}
-                              alt="Food image"
-                            />
-                          </div>
-                        </div>
+            {cart.map((item, index) => (
+              <tr key={item._id}>
+                <td>
+                  <label>{index + 1}</label>
+                </td>
+                <td>
+                  <div className="flex items-center space-x-3">
+                    <div className="avatar">
+                      <div className="w-12 h-12">
+                        <img src={item.image} alt="Food image" />
                       </div>
-                    </td>
-                    <td className="font-bold">
-                    {item.name}
-                    </td>
-                    <td>${item.price}</td>
-                    <td>
-                      <button onClick={()=>handleDelete(item)} className="btn btn-md bg-red-500 border-0"><AiFillDelete className="text-lg"></AiFillDelete></button>
-                    </td>
-                  </tr>)
-            }
-            
+                    </div>
+                  </div>
+                </td>
+                <td className="font-bold">{item.name}</td>
+                <td>${item.price}</td>
+                <td>
+                  <button
+                    onClick={() => handleDelete(item)}
+                    className="btn btn-md bg-red-500 border-0"
+                  >
+                    <AiFillDelete className="text-lg"></AiFillDelete>
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

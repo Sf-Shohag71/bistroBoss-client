@@ -1,6 +1,4 @@
 import { Link, useNavigate } from "react-router-dom";
-import { AiFillGoogleCircle } from "react-icons/ai";
-import { FaFacebook, FaGithub } from "react-icons/fa";
 import bgImg from "../assets/others/authentication.png";
 import logImg from "../assets/others/authentication2.png";
 import { useForm } from "react-hook-form";
@@ -8,6 +6,7 @@ import { Helmet } from "react-helmet-async";
 import { useContext } from "react";
 import { AuthContext } from "../providers/AuthProvider";
 import Swal from "sweetalert2";
+import SocialLogin from "../Components/SocialLogin/SocialLogin";
 
 const SignUp = () => {
   const {
@@ -16,29 +15,40 @@ const SignUp = () => {
     reset,
     formState: { errors },
   } = useForm();
-  const { createUser, updateUserProfile, logOut } = useContext(AuthContext);
+  const { createUser, updateUserProfile } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const onSubmit = (data) => {
-    console.log(data);
-    createUser(data.email, data.password)
-    .then((result) => {
+    createUser(data.email, data.password).then((result) => {
       const loggedUser = result.user;
       console.log(loggedUser);
+
       updateUserProfile(data.name, data.photoURL)
-      .then(() => {
-        reset();
-        Swal.fire({
-          icon: "success",
-          title: "Signing Up Successfully",
-          footer: '<a href="/">Back to Home</a>',
-        });
-        logOut()
-        .then(()=>{
-            navigate('/login');
+        .then(() => {
+          const saveUser = { name: data.name, email: data.email };
+          fetch("http://localhost:5000/users", {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify(saveUser),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.insertedId) {
+                reset();
+                Swal.fire({
+                  position: "top-end",
+                  icon: "success",
+                  title: "User created successfully.",
+                  showConfirmButton: false,
+                  timer: 1500,
+                });
+                navigate("/");
+              }
+            });
         })
-      })
-      .catch(error=>console.log(error))
+        .catch((error) => console.log(error));
     });
   };
 
@@ -159,17 +169,7 @@ const SignUp = () => {
             </div>
             <div className="form-control mb-6">
               <p className="text-center font-semibold mb-4">or sign up with</p>
-              <div className="flex mx-auto space-x-6">
-                <div>
-                  <FaFacebook className="text-3xl hover:text-[#D1A054] cursor-pointer"></FaFacebook>
-                </div>
-                <div>
-                  <AiFillGoogleCircle className="text-[32px] hover:text-[#D1A054] cursor-pointer"></AiFillGoogleCircle>
-                </div>
-                <div>
-                  <FaGithub className="text-3xl hover:text-[#D1A054] cursor-pointer"></FaGithub>
-                </div>
-              </div>
+              <SocialLogin></SocialLogin>
             </div>
           </div>
           <div className="text-center w-1/2">
