@@ -9,11 +9,13 @@ import {
 } from "react-icons/ai";
 import { FaShoppingCart, FaFlickr, FaUtensils, FaUsers } from "react-icons/fa";
 import useCart from "../../Hooks/useCart";
+import useAdmin from "../../Hooks/useAdmin";
 
 const Deshboard = () => {
   const [cart] = useCart();
   //TODO: load data from server and check isAdmin based on data
-  const isAdmin = true;
+  // const isAdmin = true;
+  const {isAdmin} = useAdmin();
   return (
     <div className="drawer drawer-mobile">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
